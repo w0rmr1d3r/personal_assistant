@@ -1,9 +1,7 @@
 #!/bin/bash
 
-echo "DOWNLOADING NECESSARY RESOURCES"
-#sudo apt install php7... -y
+# Install php7
+sudo apt install php7.0-cli
 
-echo "PHP7 INSTALLED"
-
-echo "STARTING SPY"
-#sudo php spy.php
+# Execute Spy
+php spy.php

@@ -18,26 +18,73 @@
             self::$INSTRUCTIONS = [
                 [
                     'command' => 'Rest',
-                    'message' => 'Rest'."\n"
+                    'message' => 'Rest'."\n",
+                    'function' => function() {}
                 ],
                 [
                     'command' => 'Date',
-                    'message' => 'Today\'s date'
+                    'message' => 'Today\'s date',
+                    'function' => function() {
+                        echo "\n" . 'Today is:' . "\n" . date('d-m-Y') . "\n\n";
+                    }
                 ],
                 [
                     'command' => 'Time',
-                    'message' => 'The time'
+                    'message' => 'The time',
+                    'function' => function() {
+                        echo "\n" . 'Now it\'s:' . "\n" . date('h:i:s') . "\n\n";
+                    }
                 ],
                 [
                     'command' => 'IP',
-                    'message' => 'My direction'
+                    'message' => 'My direction',
+                    'function' => function() {
+                        $ipaddress = 'UNKNOWN direction';
+                        if (getenv('HTTP_CLIENT_IP'))
+                        {
+                            $ipaddress = getenv('HTTP_CLIENT_IP');
+                        }
+                        else if(getenv('HTTP_X_FORWARDED_FOR'))
+                        {
+                            $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+                        }
+                        else if(getenv('HTTP_X_FORWARDED'))
+                        {
+                            $ipaddress = getenv('HTTP_X_FORWARDED');
+                        }
+                        else if(getenv('HTTP_FORWARDED_FOR'))
+                        {
+                            $ipaddress = getenv('HTTP_FORWARDED_FOR');
+                        }
+                        else if(getenv('HTTP_FORWARDED'))
+                        {
+                           $ipaddress = getenv('HTTP_FORWARDED');
+                        }
+                        else if(getenv('REMOTE_ADDR'))
+                        {
+                            $ipaddress = getenv('REMOTE_ADDR');
+                        }
+
+                        echo "\n" . 'Your IP is:' . "\n";
+                        echo $ipaddress . "\n\n";
+                    }
                 ],
                 [
                     'command' => 'Show history',
-                    'message' => 'Instructions history'
+                    'message' => 'Instructions history',
+                    'function' => function() {
+                        echo "\n" . 'Instructions history' . "\n" . self::$history . "\n\n";
+                    }
+                ],
+                [
+                    'command' => 'Location',
+                    'message' => 'Show location',
+                    'function' => function() {
+                        echo "\n" . 'Spy@' . getcwd() . "\n\n";
+                    }
                 ]
             ];
-            self::$history .= 'Cellduh has been created' . "\n";
+            self::$history .= date('h:i:s') . ' -- new spy created' . "\n";
         }
 
         /**
@@ -49,7 +96,7 @@
         {
             if (!is_null($newHistory))
             {
-                self::$history .= $newHistory . "\n";
+                self::$history .= date('h:i:s') . ' -- ' . $newHistory . "\n";
             }
         }
 
@@ -77,7 +124,11 @@
         private function showMenu()
         {
             echo 'What do you need?' . "\n";
-            // TODO for loop for self::INSTRUCTIONS
+            for ($i = 1; $i < count(self::$INSTRUCTIONS); $i++)
+            {
+                echo $i . ' - ' . self::$INSTRUCTIONS[$i]['message'] . "\n";
+            }
+            echo '0 - ' . self::$INSTRUCTIONS[self::$EXIT_OPTION]['message'] . "\n";
             echo 'Enter your wish...' . "\n";
         }
 
@@ -93,84 +144,9 @@
                 && $option >= 0 
                 && $option <= count(self::$INSTRUCTIONS) - 1)
             {
-                $this->extendHistory(self::$INSTRUCTIONS[$option]);
-                switch ($option) {
-                    case '1':
-                        $this->getTodayDate();
-                        break;
-                    case '2':
-                        $this->getCurrentTime();
-                        break;
-                    case '3':
-                        $this->getIP();
-                    case '4':
-                        $this->getHistory();
-                        break;
-                    default:
-                        break;
-                }
+                $this->extendHistory(self::$INSTRUCTIONS[$option]['command']);
+                self::$INSTRUCTIONS[$option]['function']();
             }
-        }
-
-        /**
-         * Echoes today's day, month and year
-         */
-        private function getTodayDate()
-        {
-            echo "\n" . 'Today is:' . "\n";
-            echo date('d-m-Y') . "\n\n";
-        }
-
-        /**
-         * Echoes current time in hours, minutes and seconds
-         */
-        private function getCurrentTime()
-        {
-            echo "\n" . 'Now it\'s:' . "\n";
-            echo date('h:i:s') . "\n\n";
-        }
-
-        /**
-         * Echoes current IP, only if run from server
-         */
-        private function getIP() {
-            $ipaddress = 'UNKNOWN direction';
-            if (getenv('HTTP_CLIENT_IP'))
-            {
-                $ipaddress = getenv('HTTP_CLIENT_IP');
-            }
-            else if(getenv('HTTP_X_FORWARDED_FOR'))
-            {
-                $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
-            }
-            else if(getenv('HTTP_X_FORWARDED'))
-            {
-                $ipaddress = getenv('HTTP_X_FORWARDED');
-            }
-            else if(getenv('HTTP_FORWARDED_FOR'))
-            {
-                $ipaddress = getenv('HTTP_FORWARDED_FOR');
-            }
-            else if(getenv('HTTP_FORWARDED'))
-            {
-               $ipaddress = getenv('HTTP_FORWARDED');
-            }
-            else if(getenv('REMOTE_ADDR'))
-            {
-                $ipaddress = getenv('REMOTE_ADDR');
-            }
-
-            echo "\n" . 'Your IP is:' . "\n";
-            echo $ipaddress . "\n\n";
-        }
-
-        /**
-         * Echoes whole history of instructions
-         */
-        private function getHistory()
-        {
-            echo "\n" . 'Instructions history' . "\n";
-            echo self::$history . "\n\n";
         }
     }
 
