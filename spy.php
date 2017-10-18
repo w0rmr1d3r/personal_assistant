@@ -1,5 +1,5 @@
 <?php
-    Class Cellduh
+    Class Spy
     {
         /* @var string Default exit option */
         private static $EXIT_OPTION = '0';
@@ -7,7 +7,7 @@
         /* @var string Histoory of instructions */        
         private static $history = '';
 
-        /* @var Array[string] Array of strings, containing possible instructions */
+        /* @var Array Array containing possible instructions */
         private static $INSTRUCTIONS = [];
 
         /**
@@ -16,11 +16,26 @@
         public function __construct()
         {
             self::$INSTRUCTIONS = [
-                'Rest',
-                'Date',
-                'Time',
-                'IP',
-                'Show history'
+                [
+                    'command' => 'Rest',
+                    'message' => 'Rest'."\n"
+                ],
+                [
+                    'command' => 'Date',
+                    'message' => 'Today\'s date'
+                ],
+                [
+                    'command' => 'Time',
+                    'message' => 'The time'
+                ],
+                [
+                    'command' => 'IP',
+                    'message' => 'My direction'
+                ],
+                [
+                    'command' => 'Show history',
+                    'message' => 'Instructions history'
+                ]
             ];
             self::$history .= 'Cellduh has been created' . "\n";
         }
@@ -39,7 +54,7 @@
         }
 
         /**
-         * Starts cellduh
+         * Starts spy
          */
         public function start()
         {
@@ -49,6 +64,7 @@
                 $this->showMenu();
                 $userInput = trim(fgets(STDIN));
                 $this->executeFunctionality($userInput);
+                sleep(1);
 
             } while ($userInput != self::$EXIT_OPTION);
 
@@ -61,11 +77,7 @@
         private function showMenu()
         {
             echo 'What do you need?' . "\n";
-            echo '1 - Today\'s date' . "\n";
-            echo '2 - The time' . "\n";
-            echo '3 - My direction' . "\n";
-            echo '4 - Instructions history' . "\n";
-            echo '0 - Rest' . "\n\n";
+            // TODO for loop for self::INSTRUCTIONS
             echo 'Enter your wish...' . "\n";
         }
 
@@ -77,7 +89,9 @@
          */
         private function executeFunctionality($option = NULL)
         {
-            if (!is_null($option) && $option >= 0 && $option <= count(self::$INSTRUCTIONS) - 1)
+            if (!is_null($option) 
+                && $option >= 0 
+                && $option <= count(self::$INSTRUCTIONS) - 1)
             {
                 $this->extendHistory(self::$INSTRUCTIONS[$option]);
                 switch ($option) {
@@ -90,7 +104,7 @@
                     case '3':
                         $this->getIP();
                     case '4':
-                    $this->getHistory();
+                        $this->getHistory();
                         break;
                     default:
                         break;
@@ -105,7 +119,6 @@
         {
             echo "\n" . 'Today is:' . "\n";
             echo date('d-m-Y') . "\n\n";
-            sleep(1);
         }
 
         /**
@@ -115,7 +128,6 @@
         {
             echo "\n" . 'Now it\'s:' . "\n";
             echo date('h:i:s') . "\n\n";
-            sleep(1);
         }
 
         /**
@@ -124,21 +136,32 @@
         private function getIP() {
             $ipaddress = 'UNKNOWN direction';
             if (getenv('HTTP_CLIENT_IP'))
+            {
                 $ipaddress = getenv('HTTP_CLIENT_IP');
+            }
             else if(getenv('HTTP_X_FORWARDED_FOR'))
+            {
                 $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+            }
             else if(getenv('HTTP_X_FORWARDED'))
+            {
                 $ipaddress = getenv('HTTP_X_FORWARDED');
+            }
             else if(getenv('HTTP_FORWARDED_FOR'))
+            {
                 $ipaddress = getenv('HTTP_FORWARDED_FOR');
+            }
             else if(getenv('HTTP_FORWARDED'))
+            {
                $ipaddress = getenv('HTTP_FORWARDED');
+            }
             else if(getenv('REMOTE_ADDR'))
+            {
                 $ipaddress = getenv('REMOTE_ADDR');
+            }
 
             echo "\n" . 'Your IP is:' . "\n";
             echo $ipaddress . "\n\n";
-            sleep(1);
         }
 
         /**
@@ -151,7 +174,6 @@
         }
     }
 
-    /* Creates a cellduh and starts it */
-    $cellduh = new Cellduh();
-    $cellduh->start();
+    /* Creates a spy and starts it */
+    $spy = (new Spy())->start();
 ?>

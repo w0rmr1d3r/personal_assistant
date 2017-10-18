@@ -1,5 +1,7 @@
-# personal_assistant
-Some code for a personal assistant
+# README #
+Personal assitant / spy with php
+
+Have fun with it!
 
 todo
 dependencies? and starting? in linux
